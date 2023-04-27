@@ -1,0 +1,3 @@
+USUARIOS    PASSWD   Cerradura
+Admin       0000     Todas
+aLBERTO		6789	 Cerr1
