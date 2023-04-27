@@ -64,7 +64,7 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
           baseDatos.DarAltaUsuario(nombreFichero);
           break;
         case 2:
-          //baseDatos.DarAltaCerradura(nombreFichero);
+          baseDatos.InsertaCerraduraEnUsuarioExistente(nombreFichero);
           break;
         case 3:
           baseDatos.DarBajaUsuario(nombreFichero);

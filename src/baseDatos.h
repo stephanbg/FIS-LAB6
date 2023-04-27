@@ -12,6 +12,7 @@ class Datos {
    Usuarios IdentificacionUsuario() const;
    bool ComprobarUsrYPwd(const Usuarios&, const std::string&) const;
    bool ComprobarUsuario(const Usuarios&, const std::string&) const;
+   void CerradurasDeUsuarioExistente(const Usuarios&, const std::string&, std::vector<std::string>&);
    //bool ComprobarCerradura(const Usuarios&, const std::string&, const std::string&) const;
    void DarAltaUsuario(const std::string&);
    void InsertaCerraduraEnUsuarioExistente(const std::string&);
@@ -19,4 +20,5 @@ class Datos {
    //void DarBajaCerradura(const std::string&);
   private:
    void ActualizarAltaUsuarioFich(const Usuarios&, const std::string&, const std::vector<std::string>&) const;
+   void ActualizarFichNuevaCerraduraEnUsuarioExistente(const Usuarios&, const std::string&, const std::vector<std::string>&) const;
 };

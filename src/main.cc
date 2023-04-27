@@ -5,15 +5,16 @@
 
 //std::vector<Usuarios>
 
-int main(int argc, char* argv[]) {
+int main() {
   int contadorIntentos = 1;
   while (true) {
     Datos baseDatos;
     Usuarios usuario = baseDatos.IdentificacionUsuario();
-    if (baseDatos.ComprobarUsrYPwd(usuario, argv[1])) {
+    std::string fich = "BASE_DATOS.txt";
+    if (baseDatos.ComprobarUsrYPwd(usuario, fich)) {
       std::cout << "¡¡¡CORRECTO!!!\n";
       contadorIntentos = 1;
-      usuario.Menu(argv[1]);      
+      usuario.Menu(fich);      
     } else {
         std::cout << "Usuario o Contraseña incorrectos.\n";
         if (contadorIntentos < 5) std::cout << "Te quedan " << 5 - contadorIntentos << " intentos.\n";
