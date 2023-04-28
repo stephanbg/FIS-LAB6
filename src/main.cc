@@ -3,9 +3,20 @@
 #include "usuario.h"
 #include "baseDatos.h"
 
-//std::vector<Usuarios>
-
 int main() {
+  std::cout << std::endl <<
+  "**************************** PROGRAMA REALIZADO POR ****************************\n"
+  "*                                                                              *\n"
+  "* Stephan Brommer Gutiérrez (Programador)        ---  alu0101493497@ull.edu.es *\n"
+  "* Adrián Abreu Alonso (Programador)              ---  alu0101327570@ull.edu.es *\n"
+  "* Alejandro Valencia Hernández (Programador)     ---  alu0101500386@ull.edu.es *\n"
+  "* Alejandro Cruz Quiralte (Programador)          ---  alu0101424545@ull.edu.es *\n"
+  "* Fernando Manuel González Perdomo (Programador) ---  alu0101506371@ull.edu.es *\n"
+  "* Gabriel Albelo Fabelo (Cliente)                ---  alu0101472911@ull.edu.es *\n"
+  "* Isaac Domínguez Fajardo (Mánager)              ---  alu0101474960@ull.edu.es *\n"
+  "*                                                                              *\n"
+  "********************************************************************************\n\n";
+  
   int contadorIntentos = 1;
   while (true) {
     Datos baseDatos;
