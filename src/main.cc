@@ -18,18 +18,18 @@ int main() {
   "********************************************************************************\n\n";
   
   int contadorIntentos = 1;
-  while (true) {
+  while (true) { //Bucle pricipal de programa
     Datos baseDatos;
     Usuarios usuario = baseDatos.IdentificacionUsuario();
     std::string fich = "BASE_DATOS.txt";
-    if (baseDatos.ComprobarUsrYPwd(usuario, fich)) {
+    if (baseDatos.ComprobarUsrYPwd(usuario, fich)) { // Revisión de usuario y contraseña
       std::cout << "¡¡¡CORRECTO!!!\n";
       contadorIntentos = 1;
-      usuario.Menu(fich);      
-    } else {
+      usuario.Menu(fich); // Entramos al menu     
+    } else { // No existe usuario introducido o contraseña incorrecta
         std::cout << "Usuario o Contraseña incorrectos.\n";
         if (contadorIntentos < 5) std::cout << "Te quedan " << 5 - contadorIntentos << " intentos.\n";
-        if (contadorIntentos == 5) {
+        if (contadorIntentos == 5) { // Numero de intentos maximo alcanzado
           std::cout << "ERROR DE LOGIN. Se ha equivocado 5 veces. Llame al servicio técnico.\n";
           return EXIT_FAILURE;
         }      

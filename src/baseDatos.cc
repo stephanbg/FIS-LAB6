@@ -1,5 +1,6 @@
 #include "baseDatos.h"
 
+//Pregunta al usuario del programa su nombre de usuario y su contraseña para introducirlo en la base de datos
 Usuarios Datos::IdentificacionUsuario() const {
     std::string id = "", passwd = "";
     id = DimeUnNombreDeUsuario();
@@ -9,6 +10,7 @@ Usuarios Datos::IdentificacionUsuario() const {
     return usuario;
 }
 
+// Pregunta al usuario un nombre de usuario
 std::string Datos::DimeUnNombreDeUsuario() const {
   std::string nombreUsuario = "";
   std::cout << "Introduzca un nombre de usuario.\n";
@@ -20,6 +22,7 @@ std::string Datos::DimeUnNombreDeUsuario() const {
   return nombreUsuario;
 }
 
+<<<<<<< HEAD
 std::string Datos::DimeUnPassword() const {
   std::cout << "Introduzca una contraseña.\n";
   std::cout << "Contraseña: ";
@@ -31,11 +34,14 @@ std::string Datos::DimeUnPassword() const {
   return passwd;
 }
 
+=======
+// Comprueba en la base de datos la existencia del usuario introducido y su contraseña
+>>>>>>> 5881cc126ab2beb69ac1277fca3adcd21df4a34f
 bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
   std::string cadaLinea = "", usr = "", pwd = "";
   bool usuarioYPasswdOK = false;
-  while (getline(fichero, cadaLinea)) {
+  while (getline(fichero, cadaLinea)) { // Recorremos las lineas del fichero
     std::stringstream ss(cadaLinea);
     std::string word;
     int contador = 0;
@@ -44,7 +50,7 @@ bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreF
         else pwd = word;
         contador++;
     }
-    if ((usr == usuario.get_id()) && (pwd == usuario.get_passwd())) {
+    if ((usr == usuario.get_id()) && (pwd == usuario.get_passwd())) { // Comprobacion de existencia de usuario y contraseña
       usuarioYPasswdOK = true;
       break;
     }    
@@ -52,6 +58,7 @@ bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreF
   return usuarioYPasswdOK;
 }
 
+// Comprueba en la base de datos la existencia del usuario introducido
 bool Datos::ComprobarUsuario(const std::string& nombreUsuario, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
   std::string cadaLinea = "", usr = "";
@@ -68,45 +75,46 @@ bool Datos::ComprobarUsuario(const std::string& nombreUsuario, const std::string
   return usuarioOK;
 }
 
+// Dar de alta a un usuario nuevo
 void Datos::DarAltaUsuario(const std::string& nombreFichero) {
   std::cout << "\nDar de Alta Usuario.\n";
   bool yaExisteUsr;
   do {
     yaExisteUsr = false;
-    Usuarios usuario = this->IdentificacionUsuario();
+    Usuarios usuario = this->IdentificacionUsuario(); // Introducimos usuario en la base de datos
     std::vector<std::string> todasCerraduras;
-    if (this->ComprobarUsuario(usuario.get_id(), nombreFichero)) {
+    if (this->ComprobarUsuario(usuario.get_id(), nombreFichero)) { // Comprobamos que exista el usuario
       std::cout << "Usuario existente.\n";
       yaExisteUsr = true;
       std::string opcion = "";
       do {
         std::cout << "Reintentar o Salir [R/S]: ";
       } while (getline(std::cin, opcion) && ((opcion != "R") && (opcion != "S")));
-      if (opcion == "S") break;
-    } else {
+      if (opcion == "S") break; // Opción de salida seleccionada
+    } else { // Opcion de reintentar seleccionada
         bool encuentroCerradura;
         std::string opcion, insertarCerradura;
         do {
           std::cout << "Que cerradura quiere abrir.\n";
-          std::string cerradura = usuario.DimeUnNombreDeCerradura();
+          std::string cerradura = usuario.DimeUnNombreDeCerradura(); // Preguntamos la cerradura que se deseaa abrir
           encuentroCerradura = false;
-          for (int i = 0; i < todasCerraduras.size(); ++i) {
+          for (int i = 0; i < todasCerraduras.size(); ++i) { // Buscamos si existe la cerradura introducida
             if (todasCerraduras[i] == cerradura) {
               encuentroCerradura = true;
               break;
             }
           }
           opcion = "", insertarCerradura = "";
-          if (encuentroCerradura == false) {
-            todasCerraduras.push_back(cerradura);
+          if (encuentroCerradura == false) { // No se encuentra la cerradura introducida
+            todasCerraduras.push_back(cerradura); // añadimos la cerradura
             std::cout << "¿Desea añadir más cerraduras al usuario? [S/N]: ";
             while (getline(std::cin, insertarCerradura) && ((insertarCerradura != "S") && (insertarCerradura != "N"))) {
               std::cout << "Tiene que responder [S/N].\n";
               std::cout << "¿Desea añadir más cerraduras al usuario? [S/N]: ";
             }
-            if (insertarCerradura == "N") break;
+            if (insertarCerradura == "N") break; // No añadimos más cerraduras
           } else {
-              std::cout << "Cerradura existente en el usuario: " << usuario.get_id() << "\n";
+              std::cout << "Cerradura existente en el usuario: " << usuario.get_id() << "\n"; // Ya existe la cerradura
               do {
                 std::cout << "Reintentar o Salir [R/S]: ";
               } while (getline(std::cin, opcion) && ((opcion != "R") && (opcion != "S")));
@@ -115,11 +123,12 @@ void Datos::DarAltaUsuario(const std::string& nombreFichero) {
         } while ((encuentroCerradura == true) || (opcion == "R") || (insertarCerradura == "S"));
     }
     if (yaExisteUsr == false) {
-      ActualizarAltaUsuarioFich(usuario, nombreFichero, todasCerraduras);
+      ActualizarAltaUsuarioFich(usuario, nombreFichero, todasCerraduras); // Actualizamos la base de datos
     }
   } while (yaExisteUsr == true);
 }
 
+// Obtiene las cerraduras del usuario introducido
 void Datos::CerradurasDeUsuarioExistente(const std::string& nombreUsuario, const std::string& nombreFichero, std::vector<std::string>& todasCerraduras) {
   std::ifstream fichero(nombreFichero);
   std::string cadaLinea = "";
@@ -137,34 +146,35 @@ void Datos::CerradurasDeUsuarioExistente(const std::string& nombreUsuario, const
   }
 }
 
+// Dar de alta nuevas cerraduras en un usuario ya existente
 void Datos::DarAltaCerraduraEnUsuarioExistente(const std::string& nombreFichero) {
   std::cout << "\nInsertar Cerradura en usuario existente.\n";
   Usuarios usuario;
-  usuario.set_id() = this->DimeUnNombreDeUsuario();
+  usuario.set_id() = this->DimeUnNombreDeUsuario(); // Preguntamos el usuario que en el que quiere añadir una cerradura
   std::vector<std::string> cerradurasDeUsuario;
-  while (usuario.get_id() == "Admin") {
+  while (usuario.get_id() == "Admin") { // El usuaruio "Admin" no es válido
     std::cout << "Este usuarios no es válido. Inténtelo de nuevo.\n";
     usuario.set_id() = this->DimeUnNombreDeUsuario();
   }
-  if (this->ComprobarUsuario(usuario.get_id(), nombreFichero) == false) {
+  if (this->ComprobarUsuario(usuario.get_id(), nombreFichero) == false) { // No existe el usuario
     std::cout << "Usuario inexistente.\n";
   } else {
-      CerradurasDeUsuarioExistente(usuario.get_id(), nombreFichero, cerradurasDeUsuario);
+      CerradurasDeUsuarioExistente(usuario.get_id(), nombreFichero, cerradurasDeUsuario); // Obtenemos las cerraduras del usuario
       bool yaExisteCerradura;
       std::string insertarCerradura = "";
       do {    
         yaExisteCerradura = false;
         std::cout << "Que cerradura quiere abrir.\n";
-        std::string cerradura = usuario.DimeUnNombreDeCerradura();
+        std::string cerradura = usuario.DimeUnNombreDeCerradura(); // Preguntamos por la cerradura que se quiere añadir
         for (int i = 0; i < cerradurasDeUsuario.size(); ++i) {
-          if (cerradura == cerradurasDeUsuario[i]) {
+          if (cerradura == cerradurasDeUsuario[i]) { // Ya estaba en el vector de cerraduras
             yaExisteCerradura = true;
             std::cout << "Esa cerradura ya podía ser abierta por: " << usuario.get_id() << std::endl << std::endl;
             break;
           }
         }
-        if (yaExisteCerradura == false) {
-          cerradurasDeUsuario.push_back(cerradura);
+        if (yaExisteCerradura == false) { // No estaba añadida la cerradura
+          cerradurasDeUsuario.push_back(cerradura); // Añadimos la cerradura
           std::cout << "¿Desea añadir más cerraduras al usuario? [S/N]: ";
           while (getline(std::cin, insertarCerradura) && ((insertarCerradura != "S") && (insertarCerradura != "N"))) {
             std::cout << "Tiene que responder [S/N].\n";
@@ -172,41 +182,43 @@ void Datos::DarAltaCerraduraEnUsuarioExistente(const std::string& nombreFichero)
           }
         }
       } while ((yaExisteCerradura == true) || (insertarCerradura == "S"));
-      ActualizarCerraduraEnUsuarioExistente(usuario.get_id(), nombreFichero, cerradurasDeUsuario);
+      ActualizarCerraduraEnUsuarioExistente(usuario.get_id(), nombreFichero, cerradurasDeUsuario); // Actualizamos la base de datos
       /// Metodo devuelve vector cerraduras de un usuario
   }
 }
 
+// Dar de baja a un usuario de la base de datos
 void Datos::DarBajaUsuario(const std::string& nombreFichero) {
   std::cout << "\nDar de Baja Usuario.\n";
   Usuarios usuario;
-  usuario.set_id() = this->DimeUnNombreDeUsuario();
+  usuario.set_id() = this->DimeUnNombreDeUsuario(); // Usuario a borrar
   while (usuario.get_id() == "Admin") {
     std::cout << "Este usuarios no es válido. Inténtelo de nuevo.\n";
     usuario.set_id() = this->DimeUnNombreDeUsuario();
   }
-  if (this->ComprobarUsuario(usuario.get_id(), nombreFichero)) {
+  if (this->ComprobarUsuario(usuario.get_id(), nombreFichero)) { // Comprobamos que el usuario exista en la base de datos
     std::ifstream fichero1(nombreFichero);
     std::string cadaLinea = "";
     std::vector<std::string> lineas;
-    while (getline(fichero1, cadaLinea)) {
+    while (getline(fichero1, cadaLinea)) { // Recorremos la base de datos
       std::stringstream ss(cadaLinea);
       std::string word;
       ss >> word;
-      if (word != usuario.get_id()) lineas.push_back(cadaLinea);
+      if (word != usuario.get_id()) lineas.push_back(cadaLinea); // Copiamos las lineas de todos los usuario que no nos interesan
     }
     fichero1.close();
     std::ofstream fichero2(nombreFichero);
-    for (int i = 0; i < lineas.size(); ++i) {
+    for (int i = 0; i < lineas.size(); ++i) { // Reescribimos la base de datos sin el usuario
       fichero2 << lineas[i];
       if (i < lineas.size() - 1) fichero2 << "\n";
     }
     fichero2.close();
-  } else {
+  } else { // El usuario que se quiere dar de baja no existe
       std::cout << "Usuario inexistente.\n";
   }
 }
 
+// Dar de baja cerraduras en un usuario ya existente
 void Datos::DarBajaCerraduraEnUsuarioExistente(const std::string& nombreFichero) {
   std::cout << "\nDar de Baja Cerradura en usuario existente.\n";
   Usuarios usuario;
@@ -236,6 +248,7 @@ void Datos::DarBajaCerraduraEnUsuarioExistente(const std::string& nombreFichero)
   }
 }
 
+<<<<<<< HEAD
 void Datos::CambiarPasswdUsuarioExistente(const std::string& nombreFichero) {
   std::cout << "\nCambiar contraseña en usuario existente.\n";
   Usuarios usuario;
@@ -252,6 +265,9 @@ void Datos::CambiarPasswdUsuarioExistente(const std::string& nombreFichero) {
   }
 }
 
+=======
+// Actualiza la base datos con el usuario que se da de alta
+>>>>>>> 5881cc126ab2beb69ac1277fca3adcd21df4a34f
 void Datos::ActualizarAltaUsuarioFich(const Usuarios& usuario, const std::string& nombreFichero, const std::vector<std::string>& todasCerraduras) const {
   std::ofstream fichero(nombreFichero, std::ios_base::app);
   fichero << "\n" << usuario.get_id() << "\t\t" << usuario.get_passwd() << "\t ";
@@ -262,6 +278,7 @@ void Datos::ActualizarAltaUsuarioFich(const Usuarios& usuario, const std::string
   fichero.close();
 }
 
+// Actualiza la base de datos con el apartado de cerraduras del usuario editado
 void Datos::ActualizarCerraduraEnUsuarioExistente(const std::string& nombreUsuario, const std::string& nombreFichero,
                                                            const std::vector<std::string>& todasCerraduras) const {
   std::vector<std::string> lineas;
