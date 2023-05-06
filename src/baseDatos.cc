@@ -1,17 +1,9 @@
 #include "baseDatos.h"
 
 Usuarios Datos::IdentificacionUsuario() const {
-    std::cout << "Usuario: ";
-    std::string id = "";
-    while (getline(std::cin, id) && (id == "USUARIOS")) {
-      std::cout << "Usuario no permitido.\n";
-      std::cout << "Usuario: ";
-    }
-    std::cout << "Contraseña: ";
-    std::string passwd = "";
-    while (getline(std::cin, passwd) && ((passwd.size() != 4) || (passwd.find_first_not_of("0123456789") != std::string::npos))) {
-      std::cout << "Requisitos, 4 dígitos: ";
-    }
+    std::string id = "", passwd = "";
+    id = DimeUnNombreDeUsuario();
+    passwd = DimeUnPassword();
     std::cout << std::endl;
     Usuarios usuario(id, passwd);
     return usuario;
@@ -26,6 +18,17 @@ std::string Datos::DimeUnNombreDeUsuario() const {
     std::cout << "Usuario: ";
   }
   return nombreUsuario;
+}
+
+std::string Datos::DimeUnPassword() const {
+  std::cout << "Introduzca una contraseña.\n";
+  std::cout << "Contraseña: ";
+  std::string passwd = "";
+  while (getline(std::cin, passwd) && ((passwd.size() != 4) || (passwd.find_first_not_of("0123456789") != std::string::npos))) {
+    std::cout << "Contraseña no permitida. Requisitos, 4 dígitos.\n";
+    std::cout << "Contraseña: ";
+  }
+  return passwd;
 }
 
 bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreFichero) const {
@@ -233,6 +236,22 @@ void Datos::DarBajaCerraduraEnUsuarioExistente(const std::string& nombreFichero)
   }
 }
 
+void Datos::CambiarPasswdUsuarioExistente(const std::string& nombreFichero) {
+  std::cout << "\nCambiar contraseña en usuario existente.\n";
+  Usuarios usuario;
+  usuario.set_id() = this->DimeUnNombreDeUsuario();
+  while (usuario.get_id() == "Admin") {
+    std::cout << "A este usuario no se le puede cambiar la contraseña. Inténtelo de nuevo.\n";
+    usuario.set_id() = this->DimeUnNombreDeUsuario();
+  }  
+  if (this->ComprobarUsuario(usuario.get_id(), nombreFichero)) {
+    std::string passwd = DimeUnPassword();
+    ActualizarPasswordEnUsuarioExistente(usuario.get_id(), passwd, nombreFichero);
+  } else {
+      std::cout << "Usuario inexistente.\n";
+  }
+}
+
 void Datos::ActualizarAltaUsuarioFich(const Usuarios& usuario, const std::string& nombreFichero, const std::vector<std::string>& todasCerraduras) const {
   std::ofstream fichero(nombreFichero, std::ios_base::app);
   fichero << "\n" << usuario.get_id() << "\t\t" << usuario.get_passwd() << "\t ";
@@ -272,4 +291,40 @@ void Datos::ActualizarCerraduraEnUsuarioExistente(const std::string& nombreUsuar
     if (i < lineas.size() - 1) fichero2 << "\n";
   }
   fichero2.close();  
+}
+
+void Datos::ActualizarPasswordEnUsuarioExistente(const std::string& nombreUsuario, const std::string& passwdUsr,
+                                                 const std::string& nombreFichero) const {
+  std::vector<std::string> lineas;
+  std::ifstream fichero1(nombreFichero);
+  std::string cadaLinea = "";
+  bool estoyEnLineaAModificar;
+  while (getline(fichero1, cadaLinea)) {
+    std::stringstream ss(cadaLinea);
+    std::string word;
+    ss >> word;
+    if (word == nombreUsuario) {
+      std::string lineaAMeter = "";
+      lineaAMeter += nombreUsuario + "\t\t";
+      ss >> word;
+      if (word == passwdUsr) {
+        std::cout << "La nueva contaseña coincide con la actual. No se modifica la base de datos.\n";
+        fichero1.close();
+        return;
+      }
+      lineaAMeter += passwdUsr + "\t ";
+      while (ss >> word) {
+        lineaAMeter += word + " ";
+      }
+      lineaAMeter = lineaAMeter.substr(0, lineaAMeter.size() - 1);
+      lineas.push_back(lineaAMeter);
+    } else lineas.push_back(cadaLinea);
+  }
+  fichero1.close();
+  std::ofstream fichero2(nombreFichero);
+  for (int i = 0; i < lineas.size(); ++i) {
+    fichero2 << lineas[i];
+    if (i < lineas.size() - 1) fichero2 << "\n";
+  }
+  fichero2.close(); 
 }

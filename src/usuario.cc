@@ -45,21 +45,23 @@ bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& n
 
 void Usuarios::Menu(const std::string& nombreFichero) const {
   std::string opcion = "";
-  while (((id_ == "Admin") && (opcion != "5")) || ((id_ != "Admin") && (opcion != "2"))) {
+  while (opcion != "0") {
     if (id_ == "Admin") {
       Datos baseDatos;
       std::cout << "\nOPCIONES ADMIN:\n";
+      std::cout << "[0] Cerrar Sesión.\n";
       std::cout << "[1] Dar de Alta Usuario.\n";
       std::cout << "[2] Dar de Alta Cerradura en usuario existente.\n";
       std::cout << "[3] Dar de Baja Usuario.\n";
       std::cout << "[4] Dar de Baja Cerradura en usuario existente.\n";
+      std::cout << "[5] Cambiar contraseña en usuario existente.\n";
       /// std::cout << "[X] Modificar Nombre de Usuario.\n";
       /// std::cout << "[X] Modificar Password de Usuario.\n";
       /// std::cout << "[X] Modificar Cerradura de Usuario.\n";
-      std::cout << "[5] Cerrar Sesión.\n";
+      
       std::cout << "\nIntroduzca opción: ";
-      while (getline(std::cin, opcion) && ((opcion < "1") || (opcion > "5"))) {
-        std::cout << "Solo se permiten las opciones en el rango [1-5].\n";
+      while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "5"))) {
+        std::cout << "Solo se permiten las opciones en el rango [0-5].\n";
         std::cout << "Introduzca opción: ";
       }
       switch (stoi(opcion)) {
@@ -75,17 +77,20 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
         case 4:
           baseDatos.DarBajaCerraduraEnUsuarioExistente(nombreFichero);
           break;
-        default: /// 5
+        case 5:
+          baseDatos.CambiarPasswdUsuarioExistente(nombreFichero);
+          break;          
+        default: /// 0
           std::cout << "\nSalir del sistema.\n";
           break;                                  
       }
     } else {
         std::cout << "\nOPCIONES CLIENTE:\n";
+        std::cout << "[0] Cerrar Sesión.\n";
         std::cout << "[1] Abrir Cerradura.\n";
-        std::cout << "[2] Cerrar Sesión.\n";
         std::cout << "\nIntroduzca opción: ";      
-        while (getline(std::cin, opcion) && ((opcion < "1") || (opcion > "2"))) {
-          std::cout << "Solo se permiten las opciones en el rango [1-2].\n";
+        while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "1"))) {
+          std::cout << "Solo se permiten las opciones en el rango [0-1].\n";
           std::cout << "Introduzca opción: ";
         }
         std::string cerradura = "";
@@ -98,7 +103,7 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
               std::cout << "\nAcceso permitido. (Luz verde y abrir puerta)\n";
             } else std::cout << "\nAcceso denegado (Luz roja y pitido de alarma).\n";            
             break;
-          default:
+          default: /// 0
             std::cout << "\nSalir del sistema.\n";
             break;
         }
