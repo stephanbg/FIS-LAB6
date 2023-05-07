@@ -1,11 +1,13 @@
 #include "usuario.h"
 #include "baseDatos.h"
 
+// Implementación del constructor de la clase Usuarios
 Usuarios::Usuarios(const std::string& id, const std::string& passwd) {
   id_ = id;
   passwd_ = passwd;
 }
 
+// Implementación del método DimeUnNombreDeCerradura cuya funcionalidad es asignar un ID/Nombre a una cerradura.
 std::string Usuarios::DimeUnNombreDeCerradura() const {
   std::cout << "Tiene que escribir Cerr seguido de un número.\n"; 
   std::cout << "Nº de cerradura: ";
@@ -21,6 +23,11 @@ std::string Usuarios::DimeUnNombreDeCerradura() const {
   return numCerradura;
 }
 
+/* 
+Implementación del método AbrirPuerta.
+   Parámetros: const std::string& numCerradura (nombre de la cerradura), const std::string& nombreFichero (fichero de entrada).
+   Cuya funcionalidad es comprobar si es posible abrir una puerta o no, en caso de éxito se procederá a abrir la misma.
+*/
 bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
   std::string cadaLinea = "";
@@ -43,7 +50,17 @@ bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& n
   return abierta;
 }
 
+<<<<<<< HEAD
 void Usuarios::Menu(const std::string& nombreFichero1, const std::string& nombreFichero2) const {
+=======
+/*
+  Implementación del método Menu.
+  Parámetro: const std::string& nombreFichero (fichero de entrada).
+  Cuya funcionalidad es mostrar y seleccionar todas las funciones posibles dentro del programa. 
+  Cada caso llamará a un método de la clase baseDatos.
+*/
+void Usuarios::Menu(const std::string& nombreFichero) const {
+>>>>>>> 95f376b5c65206f9adc5b2c00233ff5ffc2d4db0
   std::string opcion = "";
   while (opcion != "0") {
     if (id_ == "Admin") {
