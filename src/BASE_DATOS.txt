@@ -1,3 +1,5 @@
 USUARIOS    PASSWD   Cerradura
 Admin       0000     Todas
-Pepe		4567	 Cerr45 Cerr38
+Pepe		2345	 Cerr67 Cerr78
+Antonio		1234	 Cerr67 Cerr2
+Jose		1111	 Cerr2 Cerr78

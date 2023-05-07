@@ -10,7 +10,7 @@ class Usuarios {
  public:
   Usuarios() {}
   Usuarios(const std::string&, const std::string&);
-  void Menu(const std::string&) const;
+  void Menu(const std::string&, const std::string&) const;
   std::string DimeUnNombreDeCerradura() const;
   std::string get_id() const { return id_; }
   std::string& set_id() { return id_; }

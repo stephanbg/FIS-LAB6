@@ -43,7 +43,7 @@ bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& n
   return abierta;
 }
 
-void Usuarios::Menu(const std::string& nombreFichero) const {
+void Usuarios::Menu(const std::string& nombreFichero1, const std::string& nombreFichero2) const {
   std::string opcion = "";
   while (opcion != "0") {
     if (id_ == "Admin") {
@@ -55,31 +55,43 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
       std::cout << "[3] Dar de Baja Usuario.\n";
       std::cout << "[4] Dar de Baja Cerradura en usuario existente.\n";
       std::cout << "[5] Cambiar contraseña en usuario existente.\n";
+      std::cout << "[6] Dar de Alta a Cerradura en el Sistema.\n";
+      std::cout << "[7] Dar de Baja a Cerradura en el Sistema.\n";
+      std::cout << "[8] Cambiar nombre de usuario existente.\n";
       /// std::cout << "[X] Modificar Nombre de Usuario.\n";
       /// std::cout << "[X] Modificar Password de Usuario.\n";
       /// std::cout << "[X] Modificar Cerradura de Usuario.\n";
       
       std::cout << "\nIntroduzca opción: ";
-      while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "5"))) {
-        std::cout << "Solo se permiten las opciones en el rango [0-5].\n";
+      while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "8"))) {
+        std::cout << "Solo se permiten las opciones en el rango [0-8].\n";
         std::cout << "Introduzca opción: ";
       }
       switch (stoi(opcion)) {
         case 1:
-          baseDatos.DarAltaUsuario(nombreFichero);
+          baseDatos.DarAltaUsuario(nombreFichero1, nombreFichero2);
           break;
         case 2:
-          baseDatos.DarAltaCerraduraEnUsuarioExistente(nombreFichero);
+          baseDatos.DarAltaCerraduraEnUsuarioExistente(nombreFichero1, nombreFichero2);
           break;
         case 3:
-          baseDatos.DarBajaUsuario(nombreFichero);
+          baseDatos.DarBajaUsuario(nombreFichero1);
           break;
         case 4:
-          baseDatos.DarBajaCerraduraEnUsuarioExistente(nombreFichero);
+          baseDatos.DarBajaCerraduraEnUsuarioExistente(nombreFichero1);
           break;
         case 5:
-          baseDatos.CambiarPasswdUsuarioExistente(nombreFichero);
-          break;          
+          baseDatos.CambiarPasswdUsuarioExistente(nombreFichero1);
+          break; 
+        case 6:
+          baseDatos.AltaCerraduraEnSistema(nombreFichero2);
+          break;
+        case 7:
+          baseDatos.BajaCerraduraEnSistema(nombreFichero1, nombreFichero2);
+          break;
+        case 8:
+          baseDatos.CambiarNombreUsuarioExistente(nombreFichero1);
+          break;                     
         default: /// 0
           std::cout << "\nSalir del sistema.\n";
           break;                                  
@@ -99,7 +111,7 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
             std::cout << "\nAbrir Cerradura.\n\n";
             std::cout << "Que cerradura quiere abrir.\n";
             cerradura = DimeUnNombreDeCerradura();
-            if (AbrirPuerta(cerradura, nombreFichero)) {
+            if (AbrirPuerta(cerradura, nombreFichero1)) {
               std::cout << "\nAcceso permitido. (Luz verde y abrir puerta)\n";
             } else std::cout << "\nAcceso denegado (Luz roja y pitido de alarma).\n";            
             break;

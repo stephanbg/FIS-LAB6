@@ -21,11 +21,11 @@ int main() {
   while (true) { //Bucle pricipal de programa
     Datos baseDatos;
     Usuarios usuario = baseDatos.IdentificacionUsuario();
-    std::string fich = "BASE_DATOS.txt";
-    if (baseDatos.ComprobarUsrYPwd(usuario, fich)) { // Revisión de usuario y contraseña
+    std::string fich1 = "BASE_DATOS.txt", fich2 = "SISTEMA.txt";
+    if (baseDatos.ComprobarUsrYPwd(usuario, fich1)) { // Revisión de usuario y contraseña
       std::cout << "¡¡¡CORRECTO!!!\n";
       contadorIntentos = 1;
-      usuario.Menu(fich); // Entramos al menu     
+      usuario.Menu(fich1, fich2); // Entramos al menu     
     } else { // No existe usuario introducido o contraseña incorrecta
         std::cout << "Usuario o Contraseña incorrectos.\n";
         if (contadorIntentos < 5) std::cout << "Te quedan " << 5 - contadorIntentos << " intentos.\n";
