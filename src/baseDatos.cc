@@ -7,6 +7,7 @@ Usuarios Datos::IdentificacionUsuario() const {
     passwd = DimeUnPassword();
     std::cout << std::endl;
     Usuarios usuario(id, passwd);
+    std::cout << std::endl;
     return usuario;
 }
 
@@ -16,9 +17,10 @@ std::string Datos::DimeUnNombreDeUsuario() const {
   std::cout << "Introduzca un nombre de usuario.\n";
   std::cout << "Usuario: ";
   while ((getline(std::cin, nombreUsuario)) && (nombreUsuario == "USUARIOS")) {
-    std::cout << "Usuario no permitido.\n";
+    std::cout << "\nUsuario no permitido.\n";
     std::cout << "Usuario: ";
   }
+  std::cout << std::endl;
   return nombreUsuario;
 }
 
@@ -55,15 +57,17 @@ std::string Datos::DimeUnPassword() const {
     }
   } while (error);
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt); /// Restaurar la configuración original de la terminal
+  std::cout << std::endl;
   return passwd;
 }
 
 bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
-  std::string cadaLinea = "", usr = "", pwd = "";
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "", usr = "", pwd = "";
   bool usuarioYPasswdOK = false;
-  while (getline(fichero, cadaLinea)) { // Recorremos las lineas del fichero
-    std::stringstream ss(cadaLinea);
+  while (getline(fichero, cadaLineaEncriptada)) { // Recorremos las lineas del fichero
+    cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     int contador = 0;
     while ((ss >> word) && (contador < 2)) { /// Extrae las 2 primeras palabras de cada linea (usuario y contraseña)
@@ -82,10 +86,11 @@ bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreF
 // Comprueba en la base de datos la existencia del usuario introducido
 bool Datos::ComprobarUsuario(const std::string& nombreUsuario, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
-  std::string cadaLinea = "", usr = "";
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "", usr = "";
   bool usuarioOK = false;
-  while (getline(fichero, cadaLinea)) {
-    std::stringstream ss(cadaLinea);
+  while (getline(fichero, cadaLineaEncriptada)) {
+    cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     ss >> word;
     if (word == nombreUsuario) {
@@ -174,9 +179,10 @@ void Datos::DarAltaUsuario(const std::string& nombreFichero1, const std::string&
 // Obtiene las cerraduras del usuario introducido
 void Datos::CerradurasDeUsuarioExistente(const std::string& nombreUsuario, const std::string& nombreFichero, std::vector<std::string>& todasCerraduras) {
   std::ifstream fichero(nombreFichero);
-  std::string cadaLinea = "";
-  while (getline(fichero, cadaLinea)) {
-    std::stringstream ss(cadaLinea);
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
+  while (getline(fichero, cadaLineaEncriptada)) {
+    cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     ss >> word;
     if (word == nombreUsuario) {
@@ -260,7 +266,7 @@ void Datos::BajaCerraduraEnSistema(const std::string& nombreFichero1, const std:
   cerradura = usuario.DimeUnNombreDeCerradura();
   if (ComprobarCerraduraEnSistema(cerradura, nombreFichero2)) {
     std::vector<std::string> lineasfich2, lineasfich1;
-    std::string cadaLinea = "";
+    std::string cadaLinea = "", cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
     std::ifstream fichero2Lectura(nombreFichero2);
     while (getline(fichero2Lectura, cadaLinea)) {
       if (cadaLinea != cerradura) lineasfich2.push_back(cadaLinea);
@@ -273,8 +279,10 @@ void Datos::BajaCerraduraEnSistema(const std::string& nombreFichero1, const std:
     }
     fichero2Escritura.close();
     std::ifstream fichero1Lectura(nombreFichero1);
-    while (getline(fichero1Lectura, cadaLinea)) {
-      std::stringstream ss(cadaLinea);
+
+    while (getline(fichero1Lectura, cadaLineaEncriptada)) {
+      cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+      std::stringstream ss(cadaLineaDesEncriptada);
       std::vector<std::string> cerradurasCadaUsuario;
       std::string word, cerraduras = "";
       ss >> word;
@@ -286,13 +294,18 @@ void Datos::BajaCerraduraEnSistema(const std::string& nombreFichero1, const std:
           if (i < cerradurasCadaUsuario.size() - 1) cerraduras += ' ';
         } else hayModificacion = true;
       }
-      if (hayModificacion == false) lineasfich1.push_back(cadaLinea);
+      if (hayModificacion == false) lineasfich1.push_back(cadaLineaEncriptada);
       else {
         if (cerraduras[cerraduras.size() - 1] == ' ') cerraduras = cerraduras.substr(0, cerraduras.size() - 1);
         std::string lineaModi = "";
-        lineaModi += word + "\t\t";
+        const int ancho1 = 11, ancho2 = 8;
+        std::ostringstream linea_ss; /// Creamos un objeto ostringstream para construir la línea
+        linea_ss << std::setw(ancho1) << std::left << word << " ";
         ss >> word;
-        lineaModi += word + "\t " + cerraduras;
+        linea_ss << std::setw(ancho2) << std::left << word << " ";
+        lineaModi = linea_ss.str(); /// Convertimos el objeto ostringstream a un std::string
+        lineaModi += cerraduras;
+        lineaModi = EncriptaLinea(lineaModi);
         lineasfich1.push_back(lineaModi);
       }
     }
@@ -319,13 +332,14 @@ void Datos::DarBajaUsuario(const std::string& nombreFichero) {
   }
   if (this->ComprobarUsuario(usuario.get_id(), nombreFichero)) { // Comprobamos que el usuario exista en la base de datos
     std::ifstream fichero1(nombreFichero);
-    std::string cadaLinea = "";
+    std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
     std::vector<std::string> lineas;
-    while (getline(fichero1, cadaLinea)) { // Recorremos la base de datos
-      std::stringstream ss(cadaLinea);
+    while (getline(fichero1, cadaLineaEncriptada)) { // Recorremos la base de datos
+      cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+      std::stringstream ss(cadaLineaDesEncriptada);
       std::string word;
       ss >> word;
-      if (word != usuario.get_id()) lineas.push_back(cadaLinea); // Copiamos las lineas de todos los usuario que no nos interesan
+      if (word != usuario.get_id()) lineas.push_back(cadaLineaEncriptada); // Copiamos las lineas de todos los usuario que no nos interesan
     }
     fichero1.close();
     std::ofstream fichero2(nombreFichero);
@@ -416,36 +430,48 @@ void Datos::CambiarNombreUsuarioExistente(const std::string& nombreFichero) {
 
 void Datos::ActualizarAltaUsuarioFich(const Usuarios& usuario, const std::string& nombreFichero, const std::vector<std::string>& todasCerraduras) const {
   std::ofstream fichero(nombreFichero, std::ios_base::app);
-  fichero << "\n" << usuario.get_id() << "\t\t" << usuario.get_passwd() << "\t ";
+  std::string linea = "", lineaEncriptada = "", usr = "", passwd = "";
+  const int ancho1 = 11, ancho2 = 8;
+  std::ostringstream linea_ss; // Creamos un objeto ostringstream para construir la línea
+  linea_ss << std::setw(ancho1) << std::left << usuario.get_id() << " ";
+  linea_ss << std::setw(ancho2) << std::left << usuario.get_passwd() << " ";
+  linea = linea_ss.str(); // Convertimos el objeto ostringstream a un std::string
   for (int i = 0; i < todasCerraduras.size(); ++i) {
-    fichero << todasCerraduras[i];
-    if (i < todasCerraduras.size() - 1) fichero << " ";
+    linea += todasCerraduras[i];
+    if (i < todasCerraduras.size() - 1) linea += " ";
   }
+  lineaEncriptada = EncriptaLinea(linea);
+  fichero << "\n" << lineaEncriptada;
   fichero.close();
 }
 
 // Actualiza la base de datos con el apartado de cerraduras del usuario editado
 void Datos::ActualizarCerraduraEnUsuarioExistente(const std::string& nombreUsuario, const std::string& nombreFichero,
-                                                           const std::vector<std::string>& todasCerraduras) const {
+                                                  const std::vector<std::string>& todasCerraduras) const {
   std::vector<std::string> lineas;
   std::ifstream fichero1(nombreFichero);
-  std::string cadaLinea = "";
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
   bool estoyEnLineaAModificar;
-  while (getline(fichero1, cadaLinea)) {
-    std::stringstream ss(cadaLinea);
+  while (getline(fichero1, cadaLineaEncriptada)) {
+    cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     ss >> word;
     if (word == nombreUsuario) {
+      const int ancho1 = 11, ancho2 = 8;
       std::string lineaAMeter = "";
-      lineaAMeter += nombreUsuario + "\t\t";
+      std::ostringstream linea_ss; // Creamos un objeto ostringstream para construir la línea
+      linea_ss << std::setw(ancho1) << std::left << nombreUsuario << " ";
       ss >> word;
-      lineaAMeter += word + "\t ";
+      linea_ss << std::setw(ancho2) << std::left << word << " ";
+      lineaAMeter = linea_ss.str(); // Convertimos el objeto ostringstream a un std::string
       for (int i = 0; i < todasCerraduras.size(); ++i) {
         lineaAMeter += todasCerraduras[i];
         if (i < todasCerraduras.size() - 1) lineaAMeter += " ";
       }
+      lineaAMeter = EncriptaLinea(lineaAMeter);
       lineas.push_back(lineaAMeter);
-    } else lineas.push_back(cadaLinea);
+    } else lineas.push_back(cadaLineaEncriptada);
   }
   fichero1.close();
   std::ofstream fichero2(nombreFichero);
@@ -460,28 +486,33 @@ void Datos::ActualizarPasswordEnUsuarioExistente(const std::string& nombreUsuari
                                                  const std::string& nombreFichero) const {
   std::vector<std::string> lineas;
   std::ifstream fichero1(nombreFichero);
-  std::string cadaLinea = "";
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
   bool estoyEnLineaAModificar;
-  while (getline(fichero1, cadaLinea)) {
-    std::stringstream ss(cadaLinea);
+  while (getline(fichero1, cadaLineaEncriptada)) {
+    cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     ss >> word;
     if (word == nombreUsuario) {
+      const int ancho1 = 11, ancho2 = 8;
       std::string lineaAMeter = "";
-      lineaAMeter += nombreUsuario + "\t\t";
+      std::ostringstream linea_ss; // Creamos un objeto ostringstream para construir la línea
+      linea_ss << std::setw(ancho1) << std::left << nombreUsuario << " ";
       ss >> word;
       if (word == passwdUsr) {
-        std::cout << "La nueva contaseña coincide con la actual. No se modifica la base de datos.\n";
+        std::cout << "\nLa nueva contaseña coincide con la actual. No se modifica la base de datos.\n";
         fichero1.close();
         return;
       }
-      lineaAMeter += passwdUsr + "\t ";
+      linea_ss << std::setw(ancho2) << std::left << passwdUsr << " ";
+      lineaAMeter = linea_ss.str(); // Convertimos el objeto ostringstream a un std::string
       while (ss >> word) {
         lineaAMeter += word + " ";
       }
       lineaAMeter = lineaAMeter.substr(0, lineaAMeter.size() - 1);
+      lineaAMeter = EncriptaLinea(lineaAMeter);
       lineas.push_back(lineaAMeter);
-    } else lineas.push_back(cadaLinea);
+    } else lineas.push_back(cadaLineaEncriptada);
   }
   fichero1.close();
   std::ofstream fichero2(nombreFichero);
@@ -496,23 +527,28 @@ void Datos::ActualizarNombreDeUsuarioExistente(const std::string& nombreUsuarioA
                                                const std::string& nombreFichero) const {
   std::vector<std::string> lineas;
   std::ifstream fichero1(nombreFichero);
-  std::string cadaLinea = "";
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
   bool estoyEnLineaAModificar;
-  while (getline(fichero1, cadaLinea)) {
-    std::stringstream ss(cadaLinea);
+  while (getline(fichero1, cadaLineaEncriptada)) {
+    cadaLineaDesEncriptada = DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     ss >> word;
     if (word == nombreUsuarioActual) {
+      const int ancho1 = 11, ancho2 = 8;
       std::string lineaAMeter = "";
-      lineaAMeter += nombreUsuarioNuevo + "\t\t";
+      std::ostringstream linea_ss; // Creamos un objeto ostringstream para construir la línea
+      linea_ss << std::setw(ancho1) << std::left << nombreUsuarioNuevo << " ";      
       ss >> word;
-      lineaAMeter += word + "\t ";
+      linea_ss << std::setw(ancho2) << std::left << word << " ";
+      lineaAMeter = linea_ss.str(); // Convertimos el objeto ostringstream a un std::string
       while (ss >> word) {
         lineaAMeter += word + " ";
       }
       lineaAMeter = lineaAMeter.substr(0, lineaAMeter.size() - 1);
+      lineaAMeter = EncriptaLinea(lineaAMeter);
       lineas.push_back(lineaAMeter);
-    } else lineas.push_back(cadaLinea);
+    } else lineas.push_back(cadaLineaEncriptada);
   }
   fichero1.close();
   std::ofstream fichero2(nombreFichero);
@@ -521,4 +557,70 @@ void Datos::ActualizarNombreDeUsuarioExistente(const std::string& nombreUsuarioA
     if (i < lineas.size() - 1) fichero2 << "\n";
   }
   fichero2.close();  
+}
+
+bool Datos::ComprobarEncriptacion(const std::string& nombreFichero) const {
+  unsigned long long sumComprobacion = 0;
+  std::string cadaLinea;
+  std::ifstream fich(nombreFichero);
+  int contadorFinal = 0;
+  while (getline(fich, cadaLinea)) {
+    for (int i = 0; i < cadaLinea.size(); ++i) {
+      sumComprobacion += (int)cadaLinea[i];
+      contadorFinal++;
+      /// Compruebo si no estaba ya encriptado y para ello si no coincide la suma de los chars o la cantidad de chars es error
+      if ((sumComprobacion > 3818) || (contadorFinal > 56)) return true;
+    }
+  }
+  return false;
+
+}
+
+void Datos::Encriptar(const std::string& nombreFichero) {
+  int randMax = 126;
+  std::string cadaLinea = "";
+  std::ifstream fichInicio(nombreFichero);
+  std::vector<std::string> lineas;
+  while (getline(fichInicio, cadaLinea)) {
+    cadaLinea = EncriptaLinea(cadaLinea);
+    if (!fichInicio.eof()) cadaLinea += "\n";
+    lineas.push_back(cadaLinea);
+  }
+  fichInicio.close();
+  std::ofstream fichEncriptado(nombreFichero);
+  for (int i = 0; i < lineas.size(); ++i) {
+    fichEncriptado << lineas[i];
+  }  
+  fichEncriptado.close();
+}
+
+void Datos::DesEncriptar(const std::string& nombreFichero) {
+  int randMax = 126;
+  std::string cadaLinea = "";
+  std::ifstream fichInicio(nombreFichero);
+  std::vector<std::string> lineas;
+  std::cout << std::endl;
+  while (getline(fichInicio, cadaLinea)) {
+    cadaLinea = DesEncriptaLinea(cadaLinea);
+    if (!fichInicio.eof()) cadaLinea += "\n";
+    std::cout << cadaLinea;
+  }
+  std::cout << std::endl;
+  fichInicio.close();
+}
+
+std::string Datos::EncriptaLinea(const std::string& linea) const {
+  std::string lineaEncriptada = "";
+  for (int i = 0; i < linea.size(); ++i) {
+    lineaEncriptada.push_back(158 - linea[i]);
+  }
+  return lineaEncriptada;
+}
+
+std::string Datos::DesEncriptaLinea(const std::string& lineaEncriptada) const {
+  std::string lineaDesencriptada = "";
+  for (int i = 0; i < lineaEncriptada.size(); ++i) {
+    lineaDesencriptada.push_back(158 - lineaEncriptada[i]);
+  }
+  return lineaDesencriptada;
 }

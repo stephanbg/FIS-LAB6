@@ -20,6 +20,7 @@ std::string Usuarios::DimeUnNombreDeCerradura() const {
       std::cout << "Nº de cerradura: ";
     } else break; 
   }
+  std::cout << std::endl;
   return numCerradura;
 }
 
@@ -30,10 +31,12 @@ Implementación del método AbrirPuerta.
 */
 bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
-  std::string cadaLinea = "";
+  std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "";
   bool abierta = false;
-  while (getline(fichero, cadaLinea)) {
-    std::stringstream ss(cadaLinea);
+  Datos baseDatos;
+  while (getline(fichero, cadaLineaEncriptada)) {
+    cadaLineaDesEncriptada = baseDatos.DesEncriptaLinea(cadaLineaEncriptada);
+    std::stringstream ss(cadaLineaDesEncriptada);
     std::string word;
     ss >> word;
     if (word == this->get_id()) {
@@ -50,17 +53,7 @@ bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& n
   return abierta;
 }
 
-<<<<<<< HEAD
 void Usuarios::Menu(const std::string& nombreFichero1, const std::string& nombreFichero2) const {
-=======
-/*
-  Implementación del método Menu.
-  Parámetro: const std::string& nombreFichero (fichero de entrada).
-  Cuya funcionalidad es mostrar y seleccionar todas las funciones posibles dentro del programa. 
-  Cada caso llamará a un método de la clase baseDatos.
-*/
-void Usuarios::Menu(const std::string& nombreFichero) const {
->>>>>>> 95f376b5c65206f9adc5b2c00233ff5ffc2d4db0
   std::string opcion = "";
   while (opcion != "0") {
     if (id_ == "Admin") {
@@ -75,13 +68,11 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
       std::cout << "[6] Dar de Alta a Cerradura en el Sistema.\n";
       std::cout << "[7] Dar de Baja a Cerradura en el Sistema.\n";
       std::cout << "[8] Cambiar nombre de usuario existente.\n";
-      /// std::cout << "[X] Modificar Nombre de Usuario.\n";
-      /// std::cout << "[X] Modificar Password de Usuario.\n";
-      /// std::cout << "[X] Modificar Cerradura de Usuario.\n";
-      
+      std::cout << "[9] Ver base de datos desencriptada.\n";
+
       std::cout << "\nIntroduzca opción: ";
-      while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "8"))) {
-        std::cout << "Solo se permiten las opciones en el rango [0-8].\n";
+      while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "9") || (opcion.size() != 1))) {
+        std::cout << "Solo se permiten las opciones en el rango [0-9].\n";
         std::cout << "Introduzca opción: ";
       }
       switch (stoi(opcion)) {
@@ -108,7 +99,10 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
           break;
         case 8:
           baseDatos.CambiarNombreUsuarioExistente(nombreFichero1);
-          break;                     
+          break;
+        case 9:
+          baseDatos.DesEncriptar(nombreFichero1);
+          break;                          
         default: /// 0
           std::cout << "\nSalir del sistema.\n";
           break;                                  
@@ -118,7 +112,7 @@ void Usuarios::Menu(const std::string& nombreFichero) const {
         std::cout << "[0] Cerrar Sesión.\n";
         std::cout << "[1] Abrir Cerradura.\n";
         std::cout << "\nIntroduzca opción: ";      
-        while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "1"))) {
+        while (getline(std::cin, opcion) && ((opcion < "0") || (opcion > "1") || (opcion.size() != 1))) {
           std::cout << "Solo se permiten las opciones en el rango [0-1].\n";
           std::cout << "Introduzca opción: ";
         }
