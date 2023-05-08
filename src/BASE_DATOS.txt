@@ -1,3 +1,2 @@
-IKI]LUOK~~~~N]KKGZ~~~[9,,=:),=
-]:150~~~~~~~nnnn~~~~~J/:=+
-N9.9~~~~~~~~mlkj~~~~~[9,,hg
+USUARIOS    PASSWD   Cerradura
+Admin       0000     Todas
