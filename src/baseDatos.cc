@@ -24,6 +24,7 @@ std::string Datos::DimeUnNombreDeUsuario() const {
   return nombreUsuario;
 }
 
+// Pide una contraseña al usuario
 std::string Datos::DimeUnPassword() const {
   std::cout << "Introduzca una contraseña.\n";
   std::cout << "Contraseña: ";
@@ -61,6 +62,7 @@ std::string Datos::DimeUnPassword() const {
   return passwd;
 }
 
+// Comprueba la existencia de un usuario
 bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
   std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "", usr = "", pwd = "";
@@ -101,6 +103,7 @@ bool Datos::ComprobarUsuario(const std::string& nombreUsuario, const std::string
   return usuarioOK;
 }
 
+// Comprueba en la base de datos de cerraduras la existencia de una cerradura
 bool Datos::ComprobarCerraduraEnSistema(const std::string& cerradura, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
   std::string cadaLinea = "";
@@ -245,6 +248,7 @@ void Datos::DarAltaCerraduraEnUsuarioExistente(const std::string& nombreFichero1
   }
 }
 
+// Dar de alta una cerradura en el sistema
 void Datos::AltaCerraduraEnSistema(const std::string& nombreFichero2) {
   std::cout << "\nAlta de cerradura en el sistema.\n";
   Usuarios usuario;
@@ -259,6 +263,7 @@ void Datos::AltaCerraduraEnSistema(const std::string& nombreFichero2) {
   }
 }
 
+// Dar de baja una cerradura del sistema
 void Datos::BajaCerraduraEnSistema(const std::string& nombreFichero1, const std::string& nombreFichero2) {
   std::cout << "\nBaja de cerradura en el sistema.\n";
   Usuarios usuario;
@@ -399,6 +404,7 @@ void Datos::CambiarPasswdUsuarioExistente(const std::string& nombreFichero) {
   }
 }
 
+// Cambiar el nobre de un usuario ya existente por otro nombre
 void Datos::CambiarNombreUsuarioExistente(const std::string& nombreFichero) {
   std::cout << "\nCambiar nombre de usuario existente.\n";
   Usuarios usuario;
@@ -428,6 +434,7 @@ void Datos::CambiarNombreUsuarioExistente(const std::string& nombreFichero) {
   }
 }
 
+// Actualiza la base de datos con el usuario editado
 void Datos::ActualizarAltaUsuarioFich(const Usuarios& usuario, const std::string& nombreFichero, const std::vector<std::string>& todasCerraduras) const {
   std::ofstream fichero(nombreFichero, std::ios_base::app);
   std::string linea = "", lineaEncriptada = "", usr = "", passwd = "";
@@ -482,6 +489,7 @@ void Datos::ActualizarCerraduraEnUsuarioExistente(const std::string& nombreUsuar
   fichero2.close();  
 }
 
+// Actualiza la base de datos en el apartado de contraseñas de un usuario existente 
 void Datos::ActualizarPasswordEnUsuarioExistente(const std::string& nombreUsuario, const std::string& passwdUsr,
                                                  const std::string& nombreFichero) const {
   std::vector<std::string> lineas;
@@ -523,6 +531,7 @@ void Datos::ActualizarPasswordEnUsuarioExistente(const std::string& nombreUsuari
   fichero2.close(); 
 }
 
+// Actualiza la base de datos en el apartado de nombre del usuario editado
 void Datos::ActualizarNombreDeUsuarioExistente(const std::string& nombreUsuarioActual, const std::string& nombreUsuarioNuevo,
                                                const std::string& nombreFichero) const {
   std::vector<std::string> lineas;
@@ -559,6 +568,7 @@ void Datos::ActualizarNombreDeUsuarioExistente(const std::string& nombreUsuarioA
   fichero2.close();  
 }
 
+// Comprobar encriptacion de contraseñas
 bool Datos::ComprobarEncriptacion(const std::string& nombreFichero) const {
   unsigned long long sumComprobacion = 0;
   std::string cadaLinea;
@@ -576,6 +586,7 @@ bool Datos::ComprobarEncriptacion(const std::string& nombreFichero) const {
 
 }
 
+//Encripta las contraseñas del sistema
 void Datos::Encriptar(const std::string& nombreFichero) {
   int randMax = 126;
   std::string cadaLinea = "";
@@ -594,6 +605,7 @@ void Datos::Encriptar(const std::string& nombreFichero) {
   fichEncriptado.close();
 }
 
+// Desencripta las contraseñas de los usuarios
 void Datos::DesEncriptar(const std::string& nombreFichero) {
   int randMax = 126;
   std::string cadaLinea = "";
@@ -609,6 +621,7 @@ void Datos::DesEncriptar(const std::string& nombreFichero) {
   fichInicio.close();
 }
 
+// Encripta las lineas de las bases de datos
 std::string Datos::EncriptaLinea(const std::string& linea) const {
   std::string lineaEncriptada = "";
   for (int i = 0; i < linea.size(); ++i) {
@@ -617,6 +630,7 @@ std::string Datos::EncriptaLinea(const std::string& linea) const {
   return lineaEncriptada;
 }
 
+// Desencripta las lineas de las bases de datos
 std::string Datos::DesEncriptaLinea(const std::string& lineaEncriptada) const {
   std::string lineaDesencriptada = "";
   for (int i = 0; i < lineaEncriptada.size(); ++i) {
