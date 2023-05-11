@@ -1,6 +1,6 @@
 #include "baseDatos.h"
 
-//Pregunta al usuario del programa su nombre de usuario y su contraseña para introducirlo en la base de datos
+//Pregunta al usuario del programa su nombre de usuario y su contraseña
 Usuarios Datos::IdentificacionUsuario() const {
     std::string id = "", passwd = "";
     id = DimeUnNombreDeUsuario();
@@ -62,7 +62,7 @@ std::string Datos::DimeUnPassword() const {
   return passwd;
 }
 
-// Comprueba la existencia de un usuario
+// Comprueba la existencia de un usuario (tanto su nombre como contraseña en la base de datos)
 bool Datos::ComprobarUsrYPwd(const Usuarios& usuario, const std::string& nombreFichero) const {
   std::ifstream fichero(nombreFichero);
   std::string cadaLineaEncriptada = "", cadaLineaDesEncriptada = "", usr = "", pwd = "";
@@ -388,6 +388,7 @@ void Datos::DarBajaCerraduraEnUsuarioExistente(const std::string& nombreFichero)
   }
 }
 
+/// Cambia la contraseña de un usuario existente
 void Datos::CambiarPasswdUsuarioExistente(const std::string& nombreFichero) {
   std::cout << "\nCambiar contraseña en usuario existente.\n";
   Usuarios usuario;
@@ -404,7 +405,8 @@ void Datos::CambiarPasswdUsuarioExistente(const std::string& nombreFichero) {
   }
 }
 
-// Cambiar el nobre de un usuario ya existente por otro nombre
+// Cambiar el nombre de un usuario ya existente por otro nombre, si es el mismo, da un aviso de que no se modificará la base de datos y si
+// es uno ya existente no te permite el cambio
 void Datos::CambiarNombreUsuarioExistente(const std::string& nombreFichero) {
   std::cout << "\nCambiar nombre de usuario existente.\n";
   Usuarios usuario;
@@ -586,7 +588,7 @@ bool Datos::ComprobarEncriptacion(const std::string& nombreFichero) const {
 
 }
 
-//Encripta las contraseñas del sistema
+//Encripta toda la base de datos
 void Datos::Encriptar(const std::string& nombreFichero) {
   int randMax = 126;
   std::string cadaLinea = "";
@@ -605,7 +607,7 @@ void Datos::Encriptar(const std::string& nombreFichero) {
   fichEncriptado.close();
 }
 
-// Desencripta las contraseñas de los usuarios
+// Desencripta la base de datos pero sólo al mostrar por pantalla
 void Datos::DesEncriptar(const std::string& nombreFichero) {
   int randMax = 126;
   std::string cadaLinea = "";

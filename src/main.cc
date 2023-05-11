@@ -3,32 +3,9 @@
 #include "usuario.h"
 #include "baseDatos.h"
 
-
-
-
-/*#include <string>
-#include <cstdlib>
-std::string encriptar(std::string cadena, int randMax) {
-  std::string encriptado = "";
-  int randNum = rand();
-  std::cout << "Rand: " << randNum << std::endl;
-  randNum = randNum % randMax + 1;
-  for (int i = 0; i < cadena.size(); i++) {
-    char c = cadena[i] + randNum;
-    encriptado += c;
-  }
-  std::cout << "El número aleatorio utilizado para encriptar es: " << randNum << std::endl;
-  return encriptado;
-}
-
-std::string desencriptar(std::string encriptado, int randNum) {
-  std::string desencriptado = "";
-  for (int i = 0; i < encriptado.size(); i++) {
-    char c = encriptado[i] - randNum;
-    desencriptado += c;
-  }
-  return desencriptado;
-}*/
+/*
+ * Funcion principal
+ */
 int main() { /// Main Original
   std::cout << std::endl <<
   "**************************** PROGRAMA REALIZADO POR ****************************\n"
@@ -48,7 +25,7 @@ int main() { /// Main Original
   while (true) { //Bucle pricipal de programa
     Datos baseDatos;
     std::string fich1 = "BASE_DATOS.txt", fich2 = "SISTEMA.txt";
-    if (baseDatos.ComprobarEncriptacion(fich1) == false) baseDatos.Encriptar(fich1);
+    if (baseDatos.ComprobarEncriptacion(fich1) == false) baseDatos.Encriptar(fich1); /// Comprueba si la primera vez que se accede ya está encriptado
     Usuarios usuario = baseDatos.IdentificacionUsuario();
     if (baseDatos.ComprobarUsrYPwd(usuario, fich1)) { // Revisión de usuario y contraseña
       std::cout << "¡¡¡CORRECTO!!!\n";

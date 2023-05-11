@@ -53,7 +53,7 @@ bool Usuarios::AbrirPuerta(const std::string& numCerradura, const std::string& n
   return abierta;
 }
 
-//Menú del sistema para los usuarios
+//Menú del sistema para los usuarios, tanto Admin, como el resto
 void Usuarios::Menu(const std::string& nombreFichero1, const std::string& nombreFichero2) const {
   std::string opcion = "";
   while (opcion != "0") {

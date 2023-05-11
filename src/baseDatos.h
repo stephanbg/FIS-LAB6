@@ -1,5 +1,7 @@
 #pragma once
-
+/* Clase que define tanto la base de datos de los usuarios, como
+ * la de las cerraduras y todas las operaciones que se pueden realizar
+ */
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -13,6 +15,7 @@
 
 class Datos {
   public:
+   /// Métodos de comrpobación
    Usuarios IdentificacionUsuario() const;
    std::string DimeUnNombreDeUsuario() const;
    std::string DimeUnPassword() const;
@@ -22,6 +25,7 @@ class Datos {
    void CerradurasDeUsuarioExistente(const std::string&, const std::string&, std::vector<std::string>&);
    bool ComprobarEncriptacion(const std::string&) const;
 
+   /// Métodos de operaciones
    void DarAltaUsuario(const std::string&, const std::string&);
    void DarAltaCerraduraEnUsuarioExistente(const std::string&, const std::string&);
    void DarBajaUsuario(const std::string&);
@@ -35,6 +39,7 @@ class Datos {
    std::string DesEncriptaLinea(const std::string&) const;
    std::string EncriptaLinea(const std::string&) const;   
   private:
+   /// Métodos privados de actualizaciones
    void ActualizarAltaUsuarioFich(const Usuarios&, const std::string&, const std::vector<std::string>&) const;
    void ActualizarCerraduraEnUsuarioExistente(const std::string&, const std::string&, const std::vector<std::string>&) const;
    void ActualizarPasswordEnUsuarioExistente(const std::string&, const std::string&, const std::string&) const;
